@@ -5,7 +5,7 @@ import (
 	"errors"
 	"image/color"
 
-	"github.com/ajstarks/svgo"
+	"github.com/ajstarks/svgo/float"
 	"github.com/boombuler/barcode"
 )
 
@@ -14,15 +14,15 @@ import (
 type QrSVG struct {
 	qr        barcode.Barcode
 	qrWidth   int
-	blockSize int
-	startingX int
-	startingY int
+	blockSize float64
+	startingX float64
+	startingY float64
 }
 
 // NewQrSVG contructs a QrSVG struct. It takes a QR Code in the form
 // of barcode.Barcode and sets the "pixel" or block size of QR Code in
 // the SVG file.
-func NewQrSVG(qr barcode.Barcode, blockSize int) QrSVG {
+func NewQrSVG(qr barcode.Barcode, blockSize float64) QrSVG {
 	return QrSVG{
 		qr:        qr,
 		qrWidth:   qr.Bounds().Max.X,
@@ -40,10 +40,8 @@ func (qs *QrSVG) WriteQrSVG(s *svg.SVG) error {
 		for x := 0; x < qs.qrWidth; x++ {
 			currX := qs.startingX
 			for y := 0; y < qs.qrWidth; y++ {
-				if qs.qr.At(x, y) == color.Black {
-					s.Rect(currX, currY, qs.blockSize, qs.blockSize, "fill:black;stroke:none")
-				} else if qs.qr.At(x, y) == color.White {
-					s.Rect(currX, currY, qs.blockSize, qs.blockSize, "fill:white;stroke:none")
+				if qs.qr.At(y, x) == color.Black {
+					s.Rect(float64(currX), float64(currY), qs.blockSize, qs.blockSize)
 				}
 				currX += qs.blockSize
 			}
@@ -57,7 +55,7 @@ func (qs *QrSVG) WriteQrSVG(s *svg.SVG) error {
 // SetStartPoint sets the top left start point of QR Code.
 // This takes an X and Y value and then adds four white "blocks"
 // to create the "quiet zone" around the QR Code.
-func (qs *QrSVG) SetStartPoint(x, y int) {
+func (qs *QrSVG) SetStartPoint(x, y float64) {
 	qs.startingX = x + (qs.blockSize * 4)
 	qs.startingY = y + (qs.blockSize * 4)
 }
@@ -68,7 +66,7 @@ func (qs *QrSVG) SetStartPoint(x, y int) {
 // to the SVG. Otherwise use the regular svg.Start() method to start your
 // SVG file.
 func (qs *QrSVG) StartQrSVG(s *svg.SVG) {
-	width := (qs.qrWidth * qs.blockSize) + (qs.blockSize * 8)
+	width := (float64(qs.qrWidth) * qs.blockSize) + (qs.blockSize * 8)
 	qs.SetStartPoint(0, 0)
 	s.Start(width, width)
 }

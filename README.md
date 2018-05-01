@@ -1,13 +1,13 @@
 # goqrsvg
-goqrsvg is an API that makes QR Code to SVG conversions.
+goqrsvg is an API that makes QR Code to SVG conversions. Originaly created by github.com/aaronarduino.
 
 ## To use:
 
-`import "github.com/aaronarduino/goqrsvg"`
+`import "github.com/srdolor/goqrsvg"`
 
 ## Uses:
 ```
-"github.com/ajstarks/svgo"
+"github.com/ajstarks/svgo/float"
 "github.com/boombuler/barcode/qr"
 ```
 
@@ -20,8 +20,8 @@ import (
   "log"
   "net/http"
 
-  "github.com/aaronarduino/goqrsvg"
-  "github.com/ajstarks/svgo"
+  "github.com/srdolor/goqrsvg"
+  "github.com/ajstarks/svgo/float"
   "github.com/boombuler/barcode/qr"
 )
 
@@ -41,7 +41,7 @@ func circle(w http.ResponseWriter, req *http.Request) {
   qrCode, _ := qr.Encode("Hello World", qr.M, qr.Auto)
 
   // Write QR code to SVG
-  qs := goqrsvg.NewQrSVG(qrCode, 5)
+  qs := goqrsvg.NewQrSVG(qrCode, 5.0)
   qs.StartQrSVG(s)
   qs.WriteQrSVG(s)
 
