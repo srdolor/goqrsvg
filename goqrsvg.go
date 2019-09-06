@@ -5,7 +5,7 @@ import (
 	"errors"
 	"image/color"
 
-	"github.com/ajstarks/svgo/float"
+	svg "github.com/ajstarks/svgo/float"
 	"github.com/boombuler/barcode"
 )
 
@@ -17,18 +17,20 @@ type QrSVG struct {
 	blockSize float64
 	startingX float64
 	startingY float64
+	style     string
 }
 
 // NewQrSVG contructs a QrSVG struct. It takes a QR Code in the form
 // of barcode.Barcode and sets the "pixel" or block size of QR Code in
 // the SVG file.
-func NewQrSVG(qr barcode.Barcode, blockSize float64) QrSVG {
+func NewQrSVG(qr barcode.Barcode, blockSize float64, style string) QrSVG {
 	return QrSVG{
 		qr:        qr,
 		qrWidth:   qr.Bounds().Max.X,
 		blockSize: blockSize,
 		startingX: 0,
 		startingY: 0,
+		style:     style,
 	}
 }
 
@@ -41,7 +43,7 @@ func (qs *QrSVG) WriteQrSVG(s *svg.SVG) error {
 			currX := qs.startingX
 			for y := 0; y < qs.qrWidth; y++ {
 				if qs.qr.At(y, x) == color.Black {
-					s.Rect(float64(currX), float64(currY), qs.blockSize, qs.blockSize)
+					s.Rect(float64(currX), float64(currY), qs.blockSize, qs.blockSize, qs.style)
 				}
 				currX += qs.blockSize
 			}
